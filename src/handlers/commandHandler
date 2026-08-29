@@ -1,0 +1,35 @@
+const fs = require('fs');
+const path = require('path');
+
+/**
+ * Scansiona ricorsivamente src/commands/ e carica ogni file come comando.
+ * Ogni file deve esportare { data: SlashCommandBuilder, execute: fn }.
+ * Aggiungere un nuovo comando = aggiungere un nuovo file in commands/,
+ * senza toccare nient'altro.
+ */
+function loadCommands(client) {
+  client.commands = new Map();
+
+  const commandsPath = path.join(__dirname, '..', 'commands');
+  const categoryFolders = fs.readdirSync(commandsPath);
+
+  for (const category of categoryFolders) {
+    const categoryPath = path.join(commandsPath, category);
+    if (!fs.statSync(categoryPath).isDirectory()) continue;
+
+    const commandFiles = fs.readdirSync(categoryPath).filter((f) => f.endsWith('.js'));
+
+    for (const file of commandFiles) {
+      const command = require(path.join(categoryPath, file));
+      if (!command?.data || !command?.execute) {
+        console.warn(`[Ranji] Comando ${file} non valido: manca "data" o "execute".`);
+        continue;
+      }
+      client.commands.set(command.data.name, command);
+    }
+  }
+
+  console.log(`[Ranji] Caricati ${client.commands.size} comandi.`);
+}
+
+module.exports = { loadCommands };
