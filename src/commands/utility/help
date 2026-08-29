@@ -1,0 +1,33 @@
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { config } = require('../../config');
+
+module.exports = {
+  data: new SlashCommandBuilder().setName('help').setDescription('Mostra i comandi disponibili di Ranji'),
+
+  async execute(interaction) {
+    const embed = new EmbedBuilder()
+      .setTitle(`🤖 ${config.bot.name} — Comandi disponibili`)
+      .setColor(0x5865f2)
+      .addFields(
+        {
+          name: '💬 AI',
+          value:
+            `Menzionami (@${config.bot.name}) in un messaggio per parlare con me. ` +
+            'Il mio tono si adatta nel tempo a come mi parli.\n`/resettone` — azzera il tono imparato con te.',
+        },
+        {
+          name: '🛡️ Moderazione',
+          value:
+            '`/kick` `/ban` `/timeout` `/warn` `/warnings lista|reset` `/clear` — richiedono i permessi adeguati.',
+        },
+        {
+          name: '⚙️ Configurazione',
+          value: '`/setlogchannel` — imposta il canale di log del server (richiede Gestisci Server).',
+        },
+        { name: 'ℹ️ Altro', value: '`/ping` — controlla se sono online.' }
+      )
+      .setFooter({ text: `${config.bot.name} è open source su GitHub` });
+
+    return interaction.reply({ embeds: [embed], ephemeral: true });
+  },
+};
