@@ -1,0 +1,67 @@
+const { SlashCommandBuilder, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
+const { getWarnings, clearWarnings } = require('../../utils/database');
+const { logToGuild } = require('../../utils/logger');
+
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName('warnings')
+    .setDescription('Visualizza o azzera gli avvertimenti di un utente')
+    .addSubcommand((sub) =>
+      sub
+        .setName('lista')
+        .setDescription("Mostra gli avvertimenti di un utente")
+        .addUserOption((opt) =>
+          opt.setName('utente').setDescription('Utente da controllare').setRequired(true)
+        )
+    )
+    .addSubcommand((sub) =>
+      sub
+        .setName('reset')
+        .setDescription('Azzera gli avvertimenti di un utente')
+        .addUserOption((opt) =>
+          opt.setName('utente').setDescription('Utente da azzerare').setRequired(true)
+        )
+    )
+    .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers),
+
+  async execute(interaction) {
+    const sub = interaction.options.getSubcommand();
+    const target = interaction.options.getUser('utente');
+
+    if (sub === 'lista') {
+      const warnings = getWarnings(interaction.guild.id, target.id);
+      if (warnings.length === 0) {
+        return interaction.reply({ content: `${target.tag} non ha avvertimenti.`, ephemeral: true });
+      }
+
+      const embed = new EmbedBuilder()
+        .setTitle(`Avvertimenti di ${target.tag}`)
+        .setColor(0xffd700)
+        .setDescription(
+          warnings
+            .map(
+              (w, i) =>
+                `**${i + 1}.** ${w.reason} — <@${w.moderatorId}> (${new Date(w.timestamp).toLocaleString('it-IT')})`
+            )
+            .join('\n')
+        );
+
+      return interaction.reply({ embeds: [embed], ephemeral: true });
+    }
+
+    if (sub === 'reset') {
+      clearWarnings(interaction.guild.id, target.id);
+
+      await logToGuild(interaction.guild, {
+        title: '🧹 Avvertimenti azzerati',
+        color: 0x00ff99,
+        fields: [
+          { name: 'Utente', value: `${target.tag} (${target.id})`, inline: true },
+          { name: 'Moderatore', value: `${interaction.user.tag}`, inline: true },
+        ],
+      });
+
+      return interaction.reply({ content: `✅ Avvertimenti di ${target.tag} azzerati.` });
+    }
+  },
+};
