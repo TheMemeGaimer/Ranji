@@ -11,7 +11,7 @@
 "dev": "node --watch src/index.js"
 },
 "keyword": ["bot", "indevelopment", "itabot", "iabot", "private-bot", "licensed", "copyright"],
-"license": "GPL-3.0 license"
+"license": "GPL-3.0 license",
 "dependencies": {
 "discord.js": "^14.16.3",
 "dotenv": "^16.4.5",
