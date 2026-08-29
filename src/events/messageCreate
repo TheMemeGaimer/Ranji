@@ -1,0 +1,58 @@
+const { analyzeTone, applyToneDelta } = require('../utils/toneAnalyzer');
+const { getUserProfile, updateUserProfile } = require('../utils/database');
+const { buildSystemPrompt } = require('../ai/toneEngine');
+const { askGrok } = require('../ai/grokClient');
+
+/**
+ * Ranji risponde con l'AI quando:
+ * - viene menzionata direttamente (@Ranji ...), oppure
+ * - il messaggio è una risposta (reply) a un suo messaggio.
+ *
+ * Ogni messaggio dell'utente, che generi o meno una risposta AI, viene comunque
+ * passato all'analizzatore di tono: così Ranji impara continuamente da COME le
+ * persone scrivono nel server, non solo da quando le interpellano direttamente.
+ */
+module.exports = {
+  name: 'messageCreate',
+  async execute(message) {
+    if (message.author.bot) return;
+    if (!message.guild) return; // per ora Ranji opera solo nei server, non in DM
+
+    // ---- 1. Apprendimento del tono da OGNI messaggio umano ----
+    const delta = analyzeTone(message.content);
+    updateUserProfile(message.author.id, (profile) => {
+      profile.tone = applyToneDelta(profile.tone, delta);
+      profile.messageCount += 1;
+    });
+
+    // ---- 2. Decidere se rispondere con l'AI ----
+    const client = message.client;
+    const isMentioned = message.mentions.has(client.user.id);
+
+    const isReplyToBot = message.reference
+      ? (await message.fetchReference().catch(() => null))?.author?.id === client.user.id
+      : false;
+
+    if (!isMentioned && !isReplyToBot) return;
+
+    // Rimuove la menzione dal testo per non confondere il modello
+    const cleanContent = message.content.replace(/<@!?\d+>/g, '').trim();
+    if (!cleanContent) {
+      await message.reply('Dimmi pure, come posso aiutarti? 🙂');
+      return;
+    }
+
+    await message.channel.sendTyping();
+
+    const profile = getUserProfile(message.author.id);
+    const systemPrompt = buildSystemPrompt(profile.tone, message.author.username);
+
+    const reply = await askGrok(message.channel.id, systemPrompt, cleanContent);
+
+    // Discord limita i messaggi a 2000 caratteri: spezziamo se serve
+    const chunks = reply.match(/[\s\S]{1,1900}/g) || [reply];
+    for (const chunk of chunks) {
+      await message.reply(chunk);
+    }
+  },
+};
