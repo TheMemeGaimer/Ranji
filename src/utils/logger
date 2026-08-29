@@ -1,0 +1,37 @@
+const { EmbedBuilder } = require('discord.js');
+const { getGuildData } = require('./database');
+
+/**
+ * Invia un embed di log nel canale configurato con /setlogchannel per quel server.
+ * Se non è stato configurato nessun canale, il log resta solo in console.
+ *
+ * @param {import('discord.js').Guild} guild
+ * @param {{ title: string, description?: string, color?: number, fields?: {name:string,value:string,inline?:boolean}[] }} options
+ */
+async function logToGuild(guild, { title, description, color = 0x5865f2, fields = [] }) {
+  console.log(`[LOG][${guild?.name || 'DM'}] ${title}${description ? ' - ' + description : ''}`);
+
+  if (!guild) return;
+
+  const guildData = getGuildData(guild.id);
+  if (!guildData.logChannelId) return;
+
+  try {
+    const channel = await guild.channels.fetch(guildData.logChannelId).catch(() => null);
+    if (!channel || !channel.isTextBased()) return;
+
+    const embed = new EmbedBuilder()
+      .setTitle(title)
+      .setColor(color)
+      .setTimestamp();
+
+    if (description) embed.setDescription(description);
+    if (fields.length > 0) embed.addFields(fields);
+
+    await channel.send({ embeds: [embed] });
+  } catch (err) {
+    console.error('[Ranji] Impossibile scrivere nel canale di log:', err);
+  }
+}
+
+module.exports = { logToGuild };
