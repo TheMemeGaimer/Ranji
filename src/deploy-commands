@@ -1,0 +1,51 @@
+const fs = require('fs');
+const path = require('path');
+const { REST, Routes } = require('discord.js');
+const { config, validateConfig } = require('./config');
+
+/**
+ * Lancia questo script (`npm run deploy`) ogni volta che aggiungi, rimuovi
+ * o modifichi un comando slash. Se GUILD_ID è impostato nel .env, i comandi
+ * vengono registrati solo su quel server (aggiornamento istantaneo, utile in
+ * sviluppo). Altrimenti vengono registrati globalmente (ci mette fino a un'ora
+ * per propagarsi su tutti i server).
+ */
+
+validateConfig();
+
+const commands = [];
+const commandsPath = path.join(__dirname, 'commands');
+const categoryFolders = fs.readdirSync(commandsPath);
+
+for (const category of categoryFolders) {
+  const categoryPath = path.join(commandsPath, category);
+  if (!fs.statSync(categoryPath).isDirectory()) continue;
+
+  const commandFiles = fs.readdirSync(categoryPath).filter((f) => f.endsWith('.js'));
+  for (const file of commandFiles) {
+    const command = require(path.join(categoryPath, file));
+    if (command?.data) commands.push(command.data.toJSON());
+  }
+}
+
+const rest = new REST().setToken(config.discord.token);
+
+(async () => {
+  try {
+    console.log(`[Ranji] Registrazione di ${commands.length} comandi slash...`);
+
+    const route = config.discord.guildId
+      ? Routes.applicationGuildCommands(config.discord.clientId, config.discord.guildId)
+      : Routes.applicationCommands(config.discord.clientId);
+
+    await rest.put(route, { body: commands });
+
+    console.log(
+      `[Ranji] Comandi registrati con successo ${
+        config.discord.guildId ? `sul server di test (${config.discord.guildId})` : 'globalmente'
+      }.`
+    );
+  } catch (err) {
+    console.error('[Ranji] Errore nella registrazione dei comandi:', err);
+  }
+})();
