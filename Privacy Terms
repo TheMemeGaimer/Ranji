@@ -1,58 +1,52 @@
-🇮🇹 Informativa sulla Privacy – Discord Bot
-1. Introduzione
-Questa Informativa sulla Privacy descrive come il bot (“il Bot”) raccoglie, utilizza, conserva e protegge i dati degli utenti all’interno del server Discord.
-Utilizzando il Bot, l’utente accetta i termini descritti in questo documento.
+🇮🇹 INFORMATIVA SULLA PRIVACY (Privacy Policy) – Discord Bot
+1. Titolare del Trattamento
+Il Titolare del trattamento dei dati è il proprietario e gestore del Bot (“il Titolare”).
+Per richieste relative alla privacy, l’utente può contattare gli amministratori del server Discord o il Titolare del Bot.
 
-2. Dati Raccolti
-Il Bot può raccogliere le seguenti categorie di dati:
+2. Oggetto dell’Informativa
+La presente Informativa descrive le modalità con cui il Bot raccoglie, utilizza, conserva e protegge i dati personali degli utenti all’interno della piattaforma Discord, in conformità al Regolamento (UE) 2016/679 (“GDPR”) e alla normativa applicabile.
 
-Dati di Discord — ID utente, ID server, ID canale, nome utente, nickname, ruoli.
+3. Categorie di Dati Trattati
+Il Bot può trattare le seguenti categorie di dati:
 
-Messaggi e contenuti — Solo se il Bot necessita di leggerli per funzioni specifiche (moderazione, comandi testuali, ticket, log).
+Dati identificativi Discord — ID utente, ID server, ID canale, username, nickname, ruoli.
 
-Comandi inviati — Testo dei comandi, parametri, timestamp.
+Dati relativi ai messaggi — Contenuti testuali esclusivamente quando necessari per l’esecuzione di comandi, funzioni di moderazione o sistemi di ticket.
+
+Dati di utilizzo — Comandi inviati, parametri, timestamp, interazioni con il Bot.
 
 Dati tecnici — Informazioni sul server, permessi, eventi Discord (join, leave, ban, ecc.).
 
-Il Bot non raccoglie dati sensibili (es. email, password, IP) né informazioni non fornite da Discord.
+Il Bot non raccoglie dati sensibili (es. email, password, IP, dati finanziari).
 
-3. Finalità del Trattamento
-I dati raccolti vengono utilizzati esclusivamente per:
+4. Finalità del Trattamento
+I dati vengono trattati per le seguenti finalità:
 
-Funzionamento del Bot
+Erogazione delle funzionalità del Bot
 
 Moderazione e sicurezza del server
 
-Analisi delle performance e prevenzione abusi
+Prevenzione di abusi, spam o attività illecite
 
-Risposta ai comandi degli utenti
+Analisi tecnica e miglioramento delle prestazioni
 
-Gestione log e audit interni
+Gestione dei log e audit interni
 
-Non vengono utilizzati per profilazione, marketing o attività commerciali.
+Risposta ai comandi e alle richieste degli utenti
 
-4. Conservazione dei Dati
-I dati vengono conservati solo per il tempo necessario alle funzioni del Bot:
+Non viene effettuata profilazione né attività di marketing.
 
-Log temporanei: 24–72 ore
+5. Base Giuridica del Trattamento
+Il trattamento dei dati si fonda su:
 
-Log di moderazione: variabile, definita dagli admin
+Legittimo interesse del Titolare (art. 6, par. 1, lett. f GDPR) per garantire sicurezza e funzionamento del Bot
 
-Configurazioni del server: fino alla rimozione del Bot
+Esecuzione di un servizio richiesto dall’utente (art. 6, par. 1, lett. b GDPR)
 
-Dati statistici: anonimizzati quando possibile
+Consenso dell’utente, quando richiesto per specifiche funzionalità
 
-5. Condivisione dei Dati
-Il Bot non condivide dati con terze parti, eccetto:
-
-Provider di hosting (es. server dove gira il Bot)
-
-Servizi tecnici necessari al funzionamento (database, API)
-
-Nessun dato viene venduto o ceduto a scopi commerciali.
-
-6. Sicurezza
-Il Bot implementa misure di sicurezza come:
+6. Modalità del Trattamento
+Il trattamento avviene mediante strumenti informatici e telematici, nel rispetto delle misure di sicurezza previste dal GDPR, tra cui:
 
 Limitazione dei permessi Discord
 
@@ -60,80 +54,99 @@ Accesso controllato al database
 
 Cifratura dei dati sensibili
 
+Backup protetti
+
 Audit periodici
 
-7. Diritti dell’Utente
-L’utente può richiedere:
+7. Conservazione dei Dati
+I dati sono conservati per il tempo strettamente necessario alle finalità indicate:
 
-Cancellazione dei dati
+Log temporanei: 24–72 ore
 
-Accesso ai dati raccolti
+Log di moderazione: secondo le politiche del server
 
-Rettifica o modifica
+Configurazioni del server: fino alla rimozione del Bot
 
-Contattando gli amministratori del server.
+Dati statistici: anonimizzati quando possibile
 
-8. Modifiche alla Privacy Policy
-La Privacy Policy può essere aggiornata. Le modifiche saranno comunicate nel server Discord.
+8. Comunicazione e Trasferimento dei Dati
+I dati non vengono comunicati a terzi, salvo:
 
-9. Contatti
-Per domande o richieste: contattare gli amministratori del server o il proprietario del Bot.
+Provider di hosting del Bot
 
-🇬🇧 Privacy Policy – Discord Bot
-1. Introduction
-This Privacy Policy explains how the bot (“the Bot”) collects, uses, stores, and protects user data within the Discord server.
-By using the Bot, users agree to the terms described in this document.
+Servizi tecnici necessari al funzionamento (database, API)
 
-2. Data Collected
-The Bot may collect the following categories of data:
+Non è previsto trasferimento dei dati fuori dall’Unione Europea, salvo utilizzo di servizi conformi al GDPR.
 
-Discord Data — User ID, server ID, channel ID, username, nickname, roles.
+9. Diritti dell’Interessato
+L’utente può esercitare i seguenti diritti:
 
-Messages and content — Only when required for specific features (moderation, text commands, tickets, logs).
+Accesso ai dati
 
-Commands issued — Command text, parameters, timestamps.
+Rettifica
+
+Cancellazione
+
+Limitazione del trattamento
+
+Opposizione
+
+Portabilità dei dati (quando applicabile)
+
+Le richieste devono essere rivolte agli amministratori del server o al Titolare.
+
+10. Modifiche alla Privacy Policy
+Il Titolare si riserva il diritto di modificare la presente Informativa. Le modifiche saranno comunicate nel server Discord.
+
+🇬🇧 PRIVACY POLICY – Discord Bot
+1. Data Controller
+The Data Controller is the owner and operator of the Bot (“the Controller”).
+Users may contact the server administrators or the Controller for privacy-related inquiries.
+
+2. Scope of the Policy
+This Privacy Policy describes how the Bot collects, processes, stores, and protects user data within Discord, in compliance with the GDPR and applicable data protection laws.
+
+3. Categories of Data Processed
+The Bot may process the following data:
+
+Discord Identifiers — User ID, server ID, channel ID, username, nickname, roles.
+
+Message content — Only when required for commands, moderation, or ticket systems.
+
+Usage data — Commands issued, parameters, timestamps, interactions.
 
 Technical data — Server information, permissions, Discord events (join, leave, ban, etc.).
 
-The Bot does not collect sensitive data such as emails, passwords, or IP addresses.
+The Bot does not collect sensitive data such as emails, passwords, IP addresses, or financial information.
 
-3. Purpose of Data Processing
-Data is used exclusively for:
+4. Purpose of Processing
+Data is processed for:
 
-Bot functionality
+Providing Bot functionalities
 
 Server moderation and security
 
-Performance analysis and abuse prevention
+Preventing abuse, spam, or unlawful activities
 
-Responding to user commands
+Technical analysis and performance improvement
 
 Internal logging and auditing
 
-No profiling, marketing, or commercial use is performed.
+Responding to user commands
 
-4. Data Retention
-Data is stored only as long as necessary:
+No profiling or marketing activities are performed.
 
-Temporary logs: 24–72 hours
+5. Legal Basis
+Processing is based on:
 
-Moderation logs: variable, defined by server admins
+Legitimate interest of the Controller (Art. 6(1)(f) GDPR)
 
-Server configuration: until the Bot is removed
+Performance of a service requested by the user (Art. 6(1)(b) GDPR)
 
-Statistical data: anonymized when possible
+User consent, when required
 
-5. Data Sharing
-The Bot does not share data with third parties except:
-
-Hosting providers
-
-Technical services required for operation (database, APIs)
-
-No data is sold or used for commercial purposes.
-
-6. Security
-Security measures include:
+6. Processing Methods
+Data is processed using IT systems with appropriate security measures, including:
 
 Limited Discord permissions
 
@@ -141,21 +154,46 @@ Controlled database access
 
 Encryption of sensitive data
 
+Secure backups
+
 Periodic audits
 
-7. User Rights
-Users may request:
+7. Data Retention
+Data is retained only as long as necessary:
 
-Data deletion
+Temporary logs: 24–72 hours
 
-Access to collected data
+Moderation logs: according to server policies
 
-Correction or modification
+Server configuration: until Bot removal
 
-By contacting server administrators.
+Statistical data: anonymized when possible
 
-8. Changes to the Privacy Policy
-This Privacy Policy may be updated. Changes will be announced in the Discord server.
+8. Data Sharing and Transfers
+Data is not shared with third parties except:
 
-9. Contact
-For questions or requests: contact the server administrators or the Bot owner.
+Hosting providers
+
+Technical services required for operation
+
+No international data transfers occur unless compliant with GDPR.
+
+9. User Rights
+Users may exercise:
+
+Access
+
+Rectification
+
+Erasure
+
+Restriction of processing
+
+Objection
+
+Data portability (where applicable)
+
+Requests must be submitted to server administrators or the Controller.
+
+10. Changes to the Policy
+The Controller may update this Privacy Policy. Updates will be announced within the Discord server.
