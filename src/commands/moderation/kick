@@ -1,0 +1,45 @@
+const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
+const { logToGuild } = require('../../utils/logger');
+
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName('kick')
+    .setDescription('Espelle un utente dal server')
+    .addUserOption((opt) =>
+      opt.setName('utente').setDescription('Utente da espellere').setRequired(true)
+    )
+    .addStringOption((opt) =>
+      opt.setName('motivo').setDescription('Motivo del kick').setRequired(false)
+    )
+    .setDefaultMemberPermissions(PermissionFlagsBits.KickMembers),
+
+  async execute(interaction) {
+    const target = interaction.options.getUser('utente');
+    const reason = interaction.options.getString('motivo') || 'Nessun motivo fornito';
+
+    const member = await interaction.guild.members.fetch(target.id).catch(() => null);
+    if (!member) {
+      return interaction.reply({ content: 'Utente non trovato nel server.', ephemeral: true });
+    }
+    if (!member.kickable) {
+      return interaction.reply({
+        content: 'Non posso espellere questo utente (permessi/ruolo troppo alti).',
+        ephemeral: true,
+      });
+    }
+
+    await member.kick(reason);
+
+    await logToGuild(interaction.guild, {
+      title: '👢 Utente espulso',
+      color: 0xffa500,
+      fields: [
+        { name: 'Utente', value: `${target.tag} (${target.id})`, inline: true },
+        { name: 'Moderatore', value: `${interaction.user.tag}`, inline: true },
+        { name: 'Motivo', value: reason },
+      ],
+    });
+
+    return interaction.reply({ content: `✅ ${target.tag} è stato espulso. Motivo: ${reason}` });
+  },
+};
