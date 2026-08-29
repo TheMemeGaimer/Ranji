@@ -1,1 +1,26 @@
-zby
+const { Client, GatewayIntentBits, Partials } = require('discord.js');
+const { config, validateConfig } = require('./config');
+const { loadCommands } = require('./handlers/commandHandler');
+const { loadEvents } = require('./handlers/eventHandler');
+
+validateConfig();
+
+const client = new Client({
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.GuildMembers, // richiede l'intent privilegiato "Server Members" attivo nel Dev Portal
+    GatewayIntentBits.MessageContent, // richiede l'intent privilegiato "Message Content" attivo nel Dev Portal
+  ],
+  partials: [Partials.Message, Partials.Channel, Partials.Reaction],
+});
+
+loadCommands(client);
+loadEvents(client);
+
+client.login(config.discord.token);
+
+// Gestione pulita di eventuali crash non catturati, per non perdere il processo in silenzio
+process.on('unhandledRejection', (err) => {
+  console.error('[Ranji] Unhandled promise rejection:', err);
+});
