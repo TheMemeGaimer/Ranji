@@ -1,0 +1,20 @@
+const { logToGuild } = require('../utils/logger');
+
+module.exports = {
+  name: 'messageUpdate',
+  async execute(oldMessage, newMessage) {
+    if (!newMessage.guild || newMessage.author?.bot) return;
+    if (oldMessage.content === newMessage.content) return; // es. solo embed caricato, niente da loggare
+
+    await logToGuild(newMessage.guild, {
+      title: '✏️ Messaggio modificato',
+      color: 0xf39c12,
+      fields: [
+        { name: 'Autore', value: `${newMessage.author.tag}`, inline: true },
+        { name: 'Canale', value: `${newMessage.channel}`, inline: true },
+        { name: 'Prima', value: (oldMessage.content || '*(vuoto)*').slice(0, 500) },
+        { name: 'Dopo', value: (newMessage.content || '*(vuoto)*').slice(0, 500) },
+      ],
+    });
+  },
+};
