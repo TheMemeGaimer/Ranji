@@ -1,1 +1,161 @@
-https://TheMemeGaimer.github.io/Ranji/terms.html
+🇮🇹 Informativa sulla Privacy – Discord Bot
+1. Introduzione
+Questa Informativa sulla Privacy descrive come il bot (“il Bot”) raccoglie, utilizza, conserva e protegge i dati degli utenti all’interno del server Discord.
+Utilizzando il Bot, l’utente accetta i termini descritti in questo documento.
+
+2. Dati Raccolti
+Il Bot può raccogliere le seguenti categorie di dati:
+
+Dati di Discord — ID utente, ID server, ID canale, nome utente, nickname, ruoli.
+
+Messaggi e contenuti — Solo se il Bot necessita di leggerli per funzioni specifiche (moderazione, comandi testuali, ticket, log).
+
+Comandi inviati — Testo dei comandi, parametri, timestamp.
+
+Dati tecnici — Informazioni sul server, permessi, eventi Discord (join, leave, ban, ecc.).
+
+Il Bot non raccoglie dati sensibili (es. email, password, IP) né informazioni non fornite da Discord.
+
+3. Finalità del Trattamento
+I dati raccolti vengono utilizzati esclusivamente per:
+
+Funzionamento del Bot
+
+Moderazione e sicurezza del server
+
+Analisi delle performance e prevenzione abusi
+
+Risposta ai comandi degli utenti
+
+Gestione log e audit interni
+
+Non vengono utilizzati per profilazione, marketing o attività commerciali.
+
+4. Conservazione dei Dati
+I dati vengono conservati solo per il tempo necessario alle funzioni del Bot:
+
+Log temporanei: 24–72 ore
+
+Log di moderazione: variabile, definita dagli admin
+
+Configurazioni del server: fino alla rimozione del Bot
+
+Dati statistici: anonimizzati quando possibile
+
+5. Condivisione dei Dati
+Il Bot non condivide dati con terze parti, eccetto:
+
+Provider di hosting (es. server dove gira il Bot)
+
+Servizi tecnici necessari al funzionamento (database, API)
+
+Nessun dato viene venduto o ceduto a scopi commerciali.
+
+6. Sicurezza
+Il Bot implementa misure di sicurezza come:
+
+Limitazione dei permessi Discord
+
+Accesso controllato al database
+
+Cifratura dei dati sensibili
+
+Audit periodici
+
+7. Diritti dell’Utente
+L’utente può richiedere:
+
+Cancellazione dei dati
+
+Accesso ai dati raccolti
+
+Rettifica o modifica
+
+Contattando gli amministratori del server.
+
+8. Modifiche alla Privacy Policy
+La Privacy Policy può essere aggiornata. Le modifiche saranno comunicate nel server Discord.
+
+9. Contatti
+Per domande o richieste: contattare gli amministratori del server o il proprietario del Bot.
+
+🇬🇧 Privacy Policy – Discord Bot
+1. Introduction
+This Privacy Policy explains how the bot (“the Bot”) collects, uses, stores, and protects user data within the Discord server.
+By using the Bot, users agree to the terms described in this document.
+
+2. Data Collected
+The Bot may collect the following categories of data:
+
+Discord Data — User ID, server ID, channel ID, username, nickname, roles.
+
+Messages and content — Only when required for specific features (moderation, text commands, tickets, logs).
+
+Commands issued — Command text, parameters, timestamps.
+
+Technical data — Server information, permissions, Discord events (join, leave, ban, etc.).
+
+The Bot does not collect sensitive data such as emails, passwords, or IP addresses.
+
+3. Purpose of Data Processing
+Data is used exclusively for:
+
+Bot functionality
+
+Server moderation and security
+
+Performance analysis and abuse prevention
+
+Responding to user commands
+
+Internal logging and auditing
+
+No profiling, marketing, or commercial use is performed.
+
+4. Data Retention
+Data is stored only as long as necessary:
+
+Temporary logs: 24–72 hours
+
+Moderation logs: variable, defined by server admins
+
+Server configuration: until the Bot is removed
+
+Statistical data: anonymized when possible
+
+5. Data Sharing
+The Bot does not share data with third parties except:
+
+Hosting providers
+
+Technical services required for operation (database, APIs)
+
+No data is sold or used for commercial purposes.
+
+6. Security
+Security measures include:
+
+Limited Discord permissions
+
+Controlled database access
+
+Encryption of sensitive data
+
+Periodic audits
+
+7. User Rights
+Users may request:
+
+Data deletion
+
+Access to collected data
+
+Correction or modification
+
+By contacting server administrators.
+
+8. Changes to the Privacy Policy
+This Privacy Policy may be updated. Changes will be announced in the Discord server.
+
+9. Contact
+For questions or requests: contact the server administrators or the Bot owner.
