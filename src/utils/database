@@ -1,0 +1,131 @@
+const fs = require('fs');
+const path = require('path');
+
+/**
+ * Database "povero" su file JSON.
+ *
+ * Perché non SQLite/Postgres? Per restare a zero dipendenze native e zero
+ * infrastruttura: chiunque clona il repo e lancia `npm start` senza dover
+ * installare un database a parte. Per un bot medio-piccolo è più che sufficiente.
+ * Se il server cresce molto, questo file è il punto in cui sostituire la
+ * persistenza con un vero database (l'interfaccia sotto resta la stessa).
+ */
+
+const DB_PATH = path.join(__dirname, '..', '..', 'data', 'db.json');
+
+const DEFAULT_DB = {
+  guilds: {},
+  users: {},
+};
+
+function ensureDbFile() {
+  const dir = path.dirname(DB_PATH);
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+  if (!fs.existsSync(DB_PATH)) {
+    fs.writeFileSync(DB_PATH, JSON.stringify(DEFAULT_DB, null, 2));
+  }
+}
+
+function readDb() {
+  ensureDbFile();
+  const raw = fs.readFileSync(DB_PATH, 'utf-8');
+  try {
+    return JSON.parse(raw);
+  } catch (err) {
+    console.error('[Ranji] db.json corrotto, ripristino un database vuoto.', err);
+    return { ...DEFAULT_DB };
+  }
+}
+
+function writeDb(data) {
+  ensureDbFile();
+  fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2));
+}
+
+// ---------- Helper per i server (guild) ----------
+
+function getGuildData(guildId) {
+  const db = readDb();
+  if (!db.guilds[guildId]) {
+    db.guilds[guildId] = {
+      logChannelId: null,
+      warnings: {}, // { userId: [ { reason, moderatorId, timestamp } ] }
+    };
+    writeDb(db);
+  }
+  return db.guilds[guildId];
+}
+
+function setLogChannel(guildId, channelId) {
+  const db = readDb();
+  if (!db.guilds[guildId]) db.guilds[guildId] = { logChannelId: null, warnings: {} };
+  db.guilds[guildId].logChannelId = channelId;
+  writeDb(db);
+}
+
+function addWarning(guildId, userId, warning) {
+  const db = readDb();
+  if (!db.guilds[guildId]) db.guilds[guildId] = { logChannelId: null, warnings: {} };
+  if (!db.guilds[guildId].warnings[userId]) db.guilds[guildId].warnings[userId] = [];
+  db.guilds[guildId].warnings[userId].push(warning);
+  writeDb(db);
+  return db.guilds[guildId].warnings[userId];
+}
+
+function getWarnings(guildId, userId) {
+  const db = readDb();
+  return db.guilds?.[guildId]?.warnings?.[userId] || [];
+}
+
+function clearWarnings(guildId, userId) {
+  const db = readDb();
+  if (db.guilds?.[guildId]?.warnings) {
+    db.guilds[guildId].warnings[userId] = [];
+    writeDb(db);
+  }
+}
+
+// ---------- Helper per gli utenti (profilo di tono) ----------
+
+function getUserProfile(userId) {
+  const db = readDb();
+  if (!db.users[userId]) {
+    db.users[userId] = {
+      tone: {
+        formality: 0, // -1 molto informale ... +1 molto formale
+        friendliness: 0, // -1 ostile ... +1 amichevole
+        humor: 0, // -1 serio ... +1 scherzoso
+        patience: 0, // -1 nervoso/scattante ... +1 paziente
+      },
+      messageCount: 0,
+      lastInteraction: null,
+    };
+    writeDb(db);
+  }
+  return db.users[userId];
+}
+
+function updateUserProfile(userId, updater) {
+  const db = readDb();
+  if (!db.users[userId]) {
+    db.users[userId] = {
+      tone: { formality: 0, friendliness: 0, humor: 0, patience: 0 },
+      messageCount: 0,
+      lastInteraction: null,
+    };
+  }
+  updater(db.users[userId]);
+  db.users[userId].lastInteraction = new Date().toISOString();
+  writeDb(db);
+  return db.users[userId];
+}
+
+module.exports = {
+  getGuildData,
+  setLogChannel,
+  addWarning,
+  getWarnings,
+  clearWarnings,
+  getUserProfile,
+  updateUserProfile,
+};
