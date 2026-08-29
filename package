@@ -13,4 +13,11 @@
 "keyword": ["bot", "indevelopment", "itabot", "iabot", "private-bot", "licensed", "copyright"],
 "license": "GPL-3.0 license"
 "dependencies": {
-"discord.js":
+"discord.js": "^14.16.3",
+"dotenv": "^16.4.5",
+"openai": "^4.68.0"
+},
+"engines": {
+"node": ">=18.17.0"
+}
+}
