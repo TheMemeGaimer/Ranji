@@ -1,0 +1,15 @@
+const { ActivityType } = require('discord.js');
+const { config } = require('../config');
+
+module.exports = {
+  name: 'clientReady',
+  once: true,
+  execute(client) {
+    console.log(`[Ranji] Connessa/o come ${client.user.tag}! Attiva su ${client.guilds.cache.size} server.`);
+
+    client.user.setPresence({
+      activities: [{ name: `${config.bot.prefix}help | menzionami per parlare`, type: ActivityType.Custom }],
+      status: 'online',
+    });
+  },
+};
