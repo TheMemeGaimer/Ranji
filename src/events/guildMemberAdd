@@ -1,0 +1,16 @@
+const { logToGuild } = require('../utils/logger');
+
+module.exports = {
+  name: 'guildMemberAdd',
+  async execute(member) {
+    await logToGuild(member.guild, {
+      title: '📥 Nuovo membro',
+      color: 0x2ecc71,
+      fields: [
+        { name: 'Utente', value: `${member.user.tag} (${member.id})`, inline: true },
+        { name: 'Account creato il', value: member.user.createdAt.toLocaleDateString('it-IT'), inline: true },
+        { name: 'Membri totali', value: `${member.guild.memberCount}`, inline: true },
+      ],
+    });
+  },
+};
