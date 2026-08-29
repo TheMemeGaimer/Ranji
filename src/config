@@ -1,0 +1,40 @@
+require('dotenv').config();
+
+/**
+ * Configurazione centralizzata di Ranji.
+ * Tutto ciò che è sensibile o cambia da deploy a deploy vive nel .env,
+ * non nel codice: così il repository resta pubblicabile in sicurezza su GitHub.
+ */
+const config = {
+  discord: {
+    token: process.env.DISCORD_TOKEN,
+    clientId: process.env.CLIENT_ID,
+    guildId: process.env.GUILD_ID || null, // opzionale, per test rapidi su un singolo server
+  },
+  ai: {
+    apiKey: process.env.XAI_API_KEY,
+    model: process.env.GROK_MODEL || 'grok-4.3',
+    baseURL: 'https://api.x.ai/v1',
+  },
+  bot: {
+    name: process.env.BOT_NAME || 'Ranji',
+    prefix: process.env.PREFIX || '!',
+  },
+};
+
+function validateConfig() {
+  const missing = [];
+  if (!config.discord.token) missing.push('DISCORD_TOKEN');
+  if (!config.discord.clientId) missing.push('CLIENT_ID');
+  if (!config.ai.apiKey) missing.push('XAI_API_KEY');
+
+  if (missing.length > 0) {
+    console.error(
+      `[Ranji] Variabili d'ambiente mancanti nel file .env: ${missing.join(', ')}\n` +
+      `Copia .env.example in .env e compilalo prima di avviare il bot.`
+    );
+    process.exit(1);
+  }
+}
+
+module.exports = { config, validateConfig };
