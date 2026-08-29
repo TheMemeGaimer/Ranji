@@ -1,0 +1,81 @@
+const OpenAI = require('openai');
+const { config } = require('../config');
+
+/**
+ * L'API di Grok (xAI) è compatibile con lo schema OpenAI:
+ * basta puntare l'SDK ufficiale "openai" al base URL di x.ai.
+ * Vedi: https://docs.x.ai
+ */
+const client = new OpenAI({
+  apiKey: config.ai.apiKey,
+  baseURL: config.ai.baseURL,
+});
+
+// Storico conversazione in memoria per canale, per dare continuità
+// alle risposte senza dover ripassare tutto il DB ogni volta.
+// Struttura: Map<channelId, {role, content}[]>
+const conversationHistory = new Map();
+const MAX_HISTORY_MESSAGES = 12; // per canale, per contenere i costi/token
+
+function getHistory(channelId) {
+  if (!conversationHistory.has(channelId)) {
+    conversationHistory.set(channelId, []);
+  }
+  return conversationHistory.get(channelId);
+}
+
+function pushToHistory(channelId, role, content) {
+  const history = getHistory(channelId);
+  history.push({ role, content });
+  while (history.length > MAX_HISTORY_MESSAGES) history.shift();
+}
+
+/**
+ * Chiede a Grok una risposta, dato un system prompt (personalità+tono) e il messaggio utente.
+ *
+ * @param {string} channelId - usato per mantenere una piccola memoria conversazionale locale
+ * @param {string} systemPrompt
+ * @param {string} userMessage
+ * @returns {Promise<string>}
+ */
+async function askGrok(channelId, systemPrompt, userMessage) {
+  const history = getHistory(channelId);
+
+  const messages = [
+    { role: 'system', content: systemPrompt },
+    ...history,
+    { role: 'user', content: userMessage },
+  ];
+
+  try {
+    const completion = await client.chat.completions.create({
+      model: config.ai.model,
+      messages,
+      temperature: 0.8,
+      max_tokens: 700,
+    });
+
+    const reply = completion.choices?.[0]?.message?.content?.trim();
+
+    if (!reply) {
+      return 'Non sono riuscita/o a generare una risposta, riprova tra poco.';
+    }
+
+    pushToHistory(channelId, 'user', userMessage);
+    pushToHistory(channelId, 'assistant', reply);
+
+    return reply;
+  } catch (err) {
+    console.error('[Ranji][Grok] Errore nella chiamata API:', err?.message || err);
+    return (
+      "Si è verificato un problema nel contattare l'AI. " +
+      "Controlla che XAI_API_KEY sia valida e riprova."
+    );
+  }
+}
+
+function clearHistory(channelId) {
+  conversationHistory.delete(channelId);
+}
+
+module.exports = { askGrok, clearHistory };
