@@ -1,0 +1,75 @@
+const { config } = require('../config');
+
+/**
+ * Trasforma il profilo di tono (4 numeri da -1 a 1, salvati per utente in database.js)
+ * in un blocco di istruzioni in linguaggio naturale da iniettare nel system prompt
+ * inviato a Grok. È qui che il bot "impara" a parlare in modo diverso con persone diverse:
+ * più l'utente è stato informale/scortese/scherzoso con Ranji nel tempo, più le risposte
+ * si adattano di conseguenza.
+ *
+ * @param {{formality:number, friendliness:number, humor:number, patience:number}} tone
+ */
+function describeTone(tone) {
+  const parts = [];
+
+  if (tone.formality > 0.3) {
+    parts.push('Usa un registro formale, dai del lei se sembra appropriato, evita slang.');
+  } else if (tone.formality < -0.3) {
+    parts.push('Usa un registro molto informale e colloquiale, come parleresti con un amico su Discord.');
+  } else {
+    parts.push('Usa un registro neutro, né troppo formale né troppo colloquiale.');
+  }
+
+  if (tone.friendliness > 0.4) {
+    parts.push('Sii particolarmente calorosa/o, incoraggiante e disponibile.');
+  } else if (tone.friendliness < -0.3) {
+    parts.push(
+      "L'utente è stato spesso brusco o scortese con te in passato. Resta comunque educata/o e " +
+      'professionale, ma sii più diretta/o e meno espansiva: niente tono servile.'
+    );
+  }
+
+  if (tone.humor > 0.4) {
+    parts.push("Puoi permetterti battute, ironia leggera ed emoji quando ha senso.");
+  } else if (tone.humor < -0.3) {
+    parts.push('Evita battute e ironia: mantieni un tono serio e concreto.');
+  }
+
+  if (tone.patience < -0.3) {
+    parts.push(
+      "L'utente tende a scrivere in modo concitato o con toni accesi: rispondi con calma, frasi brevi " +
+      'e vai dritta/o al punto, senza escalation.'
+    );
+  } else if (tone.patience > 0.4) {
+    parts.push('Puoi permetterti risposte più articolate e riflessive, con più contesto.');
+  }
+
+  return parts.join(' ');
+}
+
+/**
+ * Costruisce il system prompt completo di Ranji per una conversazione,
+ * combinando personalità di base + tono appreso per quello specifico utente.
+ *
+ * @param {{formality:number, friendliness:number, humor:number, patience:number}} tone
+ * @param {string} username
+ */
+function buildSystemPrompt(tone, username) {
+  const base =
+    `Sei ${config.bot.name}, l'assistente AI di questo server Discord. ` +
+    'Rispondi sempre in italiano, in modo utile, conciso e pertinente al contesto Discord ' +
+    '(niente markdown eccessivo, va bene usare quello di Discord tipo **grassetto** con moderazione). ' +
+    'Non inventare regole del server che non conosci. Se ti chiedono azioni di moderazione ' +
+    '(bannare, kickare, ecc.), ricorda che tu non puoi eseguirle direttamente: suggerisci di usare ' +
+    'i comandi slash dedicati (/kick, /ban, /timeout, /warn).';
+
+  const toneInstructions = describeTone(tone);
+
+  return (
+    `${base}\n\n` +
+    `Stai parlando con l'utente "${username}". In base alle interazioni passate con questa persona, ` +
+    `adatta il tuo modo di esprimerti così: ${toneInstructions}`
+  );
+}
+
+module.exports = { buildSystemPrompt, describeTone };
