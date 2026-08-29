@@ -109,4 +109,4 @@ Puoi azzerare in ogni momento il tono che Ranji ha imparato su di te con `/reset
 
 ## 📄 Licenza
 
-MIT — vedi `LICENSE`. Usalo, modificalo, ospitalo dove vuoi.
+GPL-3.0 license — vedi `LICENSE`.
