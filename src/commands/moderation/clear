@@ -1,0 +1,43 @@
+const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
+const { logToGuild } = require('../../utils/logger');
+
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName('clear')
+    .setDescription('Elimina un numero di messaggi recenti dal canale')
+    .addIntegerOption((opt) =>
+      opt
+        .setName('quantita')
+        .setDescription('Numero di messaggi da eliminare (1-100)')
+        .setMinValue(1)
+        .setMaxValue(100)
+        .setRequired(true)
+    )
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages),
+
+  async execute(interaction) {
+    const amount = interaction.options.getInteger('quantita');
+
+    await interaction.deferReply({ ephemeral: true });
+
+    const deleted = await interaction.channel.bulkDelete(amount, true).catch(() => null);
+
+    if (!deleted) {
+      return interaction.editReply(
+        'Non sono riuscita/o a eliminare i messaggi (potrebbero avere più di 14 giorni).'
+      );
+    }
+
+    await logToGuild(interaction.guild, {
+      title: '🧹 Messaggi eliminati',
+      color: 0x00b0f4,
+      fields: [
+        { name: 'Canale', value: `${interaction.channel}`, inline: true },
+        { name: 'Quantità', value: `${deleted.size}`, inline: true },
+        { name: 'Moderatore', value: `${interaction.user.tag}`, inline: true },
+      ],
+    });
+
+    return interaction.editReply(`✅ Eliminati ${deleted.size} messaggi.`);
+  },
+};
