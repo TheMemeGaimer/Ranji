@@ -1,0 +1,23 @@
+const { SlashCommandBuilder } = require('discord.js');
+const { updateUserProfile } = require('../../utils/database');
+const { clearHistory } = require('../../ai/grokClient');
+
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName('resettone')
+    .setDescription('Azzera il tono che Ranji ha imparato nei tuoi confronti, ricominciando da neutro'),
+
+  async execute(interaction) {
+    updateUserProfile(interaction.user.id, (profile) => {
+      profile.tone = { formality: 0, friendliness: 0, humor: 0, patience: 0 };
+      profile.messageCount = 0;
+    });
+
+    clearHistory(interaction.channelId);
+
+    return interaction.reply({
+      content: '🔄 Ho azzerato il tono che avevo imparato con te. Ripartiamo da zero!',
+      ephemeral: true,
+    });
+  },
+};
