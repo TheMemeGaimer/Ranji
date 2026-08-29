@@ -1,0 +1,42 @@
+const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
+const { addWarning } = require('../../utils/database');
+const { logToGuild } = require('../../utils/logger');
+
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName('warn')
+    .setDescription('Assegna un avvertimento a un utente')
+    .addUserOption((opt) =>
+      opt.setName('utente').setDescription('Utente da avvertire').setRequired(true)
+    )
+    .addStringOption((opt) =>
+      opt.setName('motivo').setDescription('Motivo del warn').setRequired(true)
+    )
+    .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers),
+
+  async execute(interaction) {
+    const target = interaction.options.getUser('utente');
+    const reason = interaction.options.getString('motivo');
+
+    const warnings = addWarning(interaction.guild.id, target.id, {
+      reason,
+      moderatorId: interaction.user.id,
+      timestamp: new Date().toISOString(),
+    });
+
+    await logToGuild(interaction.guild, {
+      title: '⚠️ Avvertimento assegnato',
+      color: 0xffd700,
+      fields: [
+        { name: 'Utente', value: `${target.tag} (${target.id})`, inline: true },
+        { name: 'Moderatore', value: `${interaction.user.tag}`, inline: true },
+        { name: 'Totale warn', value: `${warnings.length}`, inline: true },
+        { name: 'Motivo', value: reason },
+      ],
+    });
+
+    return interaction.reply({
+      content: `⚠️ ${target.tag} ha ricevuto un warn (totale: ${warnings.length}). Motivo: ${reason}`,
+    });
+  },
+};
