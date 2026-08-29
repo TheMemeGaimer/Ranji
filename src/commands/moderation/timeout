@@ -1,0 +1,57 @@
+const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
+const { logToGuild } = require('../../utils/logger');
+
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName('timeout')
+    .setDescription('Silenzia temporaneamente un utente')
+    .addUserOption((opt) =>
+      opt.setName('utente').setDescription('Utente da silenziare').setRequired(true)
+    )
+    .addIntegerOption((opt) =>
+      opt
+        .setName('minuti')
+        .setDescription('Durata del timeout in minuti (max 40320 = 28 giorni)')
+        .setMinValue(1)
+        .setMaxValue(40320)
+        .setRequired(true)
+    )
+    .addStringOption((opt) =>
+      opt.setName('motivo').setDescription('Motivo del timeout').setRequired(false)
+    )
+    .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers),
+
+  async execute(interaction) {
+    const target = interaction.options.getUser('utente');
+    const minutes = interaction.options.getInteger('minuti');
+    const reason = interaction.options.getString('motivo') || 'Nessun motivo fornito';
+
+    const member = await interaction.guild.members.fetch(target.id).catch(() => null);
+    if (!member) {
+      return interaction.reply({ content: 'Utente non trovato nel server.', ephemeral: true });
+    }
+    if (!member.moderatable) {
+      return interaction.reply({
+        content: 'Non posso silenziare questo utente (permessi/ruolo troppo alti).',
+        ephemeral: true,
+      });
+    }
+
+    await member.timeout(minutes * 60 * 1000, reason);
+
+    await logToGuild(interaction.guild, {
+      title: '🔇 Timeout applicato',
+      color: 0xffcc00,
+      fields: [
+        { name: 'Utente', value: `${target.tag} (${target.id})`, inline: true },
+        { name: 'Durata', value: `${minutes} minuti`, inline: true },
+        { name: 'Moderatore', value: `${interaction.user.tag}`, inline: true },
+        { name: 'Motivo', value: reason },
+      ],
+    });
+
+    return interaction.reply({
+      content: `✅ ${target.tag} è stato silenziato per ${minutes} minuti. Motivo: ${reason}`,
+    });
+  },
+};
