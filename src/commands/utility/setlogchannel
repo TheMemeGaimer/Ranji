@@ -1,0 +1,26 @@
+const { SlashCommandBuilder, PermissionFlagsBits, ChannelType } = require('discord.js');
+const { setLogChannel } = require('../../utils/database');
+
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName('setlogchannel')
+    .setDescription('Imposta il canale in cui Ranji invia i log di moderazione e attività')
+    .addChannelOption((opt) =>
+      opt
+        .setName('canale')
+        .setDescription('Canale testuale da usare come log')
+        .addChannelTypes(ChannelType.GuildText)
+        .setRequired(true)
+    )
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild),
+
+  async execute(interaction) {
+    const channel = interaction.options.getChannel('canale');
+    setLogChannel(interaction.guild.id, channel.id);
+
+    return interaction.reply({
+      content: `✅ I log di Ranji verranno inviati in ${channel}.`,
+      ephemeral: true,
+    });
+  },
+};
