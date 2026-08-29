@@ -1,0 +1,16 @@
+{
+"name": "ranki-bot",
+"version": "1.0.0",
+"description": "Ranji è un bot sperimentale sviluppato da The_Meme_Gaimer e il suo fidato collega Lenny. Rangi è un bot che funziona con IA e impara da quello che gli dici.",
+"main": "src/index.js",
+"type": "commonjs",
+
+"scripts": {
+"start": "node src/index.js",
+"deploy": "node src/deploy-commands.js",
+"dev": "node --watch src/index.js"
+},
+"keyword": ["bot", "indevelopment", "itabot", "iabot", "private-bot", "licensed", "copyright"],
+"license": "GPL-3.0 license"
+"dependencies": {
+"discord.js":
