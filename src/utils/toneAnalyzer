@@ -1,0 +1,118 @@
+/**
+ * Analizza un messaggio e restituisce un piccolo "delta" di tono
+ * su 4 assi: formality, friendliness, humor, patience.
+ *
+ * Non è machine learning: è un insieme di euristiche testuali (parole chiave,
+ * punteggiatura, uso di maiuscole/emoji). È deliberatamente semplice e
+ * trasparente: si legge, si capisce, si estende facilmente aggiungendo
+ * parole alle liste qui sotto.
+ */
+
+const RUDE_WORDS = [
+  'stupido', 'idiota', 'cretino', 'zitto', 'merda', 'cazzo', 'stronzo',
+  'scemo', 'imbecille', 'odio', 'schifo',
+];
+
+const POLITE_WORDS = [
+  'per favore', 'per piacere', 'grazie', 'gentilmente', 'scusa', 'scusami',
+  'cortesemente', 'ti prego',
+];
+
+const FORMAL_MARKERS = [
+  'buongiorno', 'buonasera', 'cordiali saluti', 'la ringrazio', 'gradirei',
+  'vorrei sapere', 'le chiedo',
+];
+
+const INFORMAL_MARKERS = [
+  'ahah', 'lol', 'boh', 'tipo', 'cioè', 'vabbè', 'raga', 'niente niente',
+];
+
+function countOccurrences(text, list) {
+  let count = 0;
+  for (const word of list) {
+    if (text.includes(word)) count += 1;
+  }
+  return count;
+}
+
+function clamp(value, min = -1, max = 1) {
+  return Math.max(min, Math.min(max, value));
+}
+
+/**
+ * @param {string} rawMessage
+ * @returns {{ formality: number, friendliness: number, humor: number, patience: number }}
+ */
+function analyzeTone(rawMessage) {
+  const text = rawMessage.toLowerCase();
+
+  let formality = 0;
+  let friendliness = 0;
+  let humor = 0;
+  let patience = 0;
+
+  // Cortesia / ostilità -> friendliness e patience
+  const politeHits = countOccurrences(text, POLITE_WORDS);
+  const rudeHits = countOccurrences(text, RUDE_WORDS);
+  friendliness += politeHits * 0.15;
+  friendliness -= rudeHits * 0.25;
+  patience -= rudeHits * 0.2;
+
+  // Formalità
+  const formalHits = countOccurrences(text, FORMAL_MARKERS);
+  const informalHits = countOccurrences(text, INFORMAL_MARKERS);
+  formality += formalHits * 0.2;
+  formality -= informalHits * 0.15;
+
+  // Emoji e punteggiatura giocosa -> humor / friendliness
+  const emojiMatches = rawMessage.match(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu) || [];
+  if (emojiMatches.length > 0) {
+    humor += Math.min(emojiMatches.length * 0.1, 0.3);
+    friendliness += Math.min(emojiMatches.length * 0.05, 0.2);
+  }
+
+  const laughMatches = text.match(/ahah|hihi|lol|xd/g) || [];
+  if (laughMatches.length > 0) {
+    humor += Math.min(laughMatches.length * 0.15, 0.4);
+  }
+
+  // TUTTO MAIUSCOLO o tanti punti esclamativi -> meno pazienza, tono acceso
+  const exclamationCount = (rawMessage.match(/!/g) || []).length;
+  if (exclamationCount >= 3) patience -= 0.15;
+
+  const letters = rawMessage.replace(/[^a-zA-ZÀ-ÿ]/g, '');
+  const upperLetters = rawMessage.replace(/[^A-ZÀ-Ý]/g, '');
+  if (letters.length > 6 && upperLetters.length / letters.length > 0.6) {
+    patience -= 0.2;
+    friendliness -= 0.1;
+  }
+
+  // Messaggi lunghi e articolati leggermente più "formali"
+  if (rawMessage.length > 220) formality += 0.1;
+  if (rawMessage.length < 15) formality -= 0.05;
+
+  return {
+    formality: clamp(formality),
+    friendliness: clamp(friendliness),
+    humor: clamp(humor),
+    patience: clamp(patience),
+  };
+}
+
+/**
+ * Applica il delta al profilo esistente con una media mobile esponenziale (EMA),
+ * così il tono si "sposta" gradualmente invece di saltare da un messaggio all'altro.
+ *
+ * @param {{formality:number,friendliness:number,humor:number,patience:number}} currentTone
+ * @param {{formality:number,friendliness:number,humor:number,patience:number}} delta
+ * @param {number} alpha peso del nuovo messaggio (0-1). Più alto = il bot si adatta più in fretta.
+ */
+function applyToneDelta(currentTone, delta, alpha = 0.12) {
+  const next = {};
+  for (const axis of ['formality', 'friendliness', 'humor', 'patience']) {
+    next[axis] = clamp(currentTone[axis] * (1 - alpha) + delta[axis] * alpha);
+  }
+  return next;
+}
+
+module.exports = { analyzeTone, applyToneDelta };
