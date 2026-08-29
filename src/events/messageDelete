@@ -1,0 +1,21 @@
+const { logToGuild } = require('../utils/logger');
+
+module.exports = {
+  name: 'messageDelete',
+  async execute(message) {
+    if (!message.guild || message.author?.bot) return;
+
+    // Se il messaggio non era in cache, Discord non ci fornisce il contenuto: lo segnaliamo comunque.
+    const content = message.partial ? '*(contenuto non disponibile, messaggio non in cache)*' : message.content;
+
+    await logToGuild(message.guild, {
+      title: '🗑️ Messaggio eliminato',
+      color: 0xe74c3c,
+      fields: [
+        { name: 'Autore', value: message.author ? `${message.author.tag}` : 'Sconosciuto', inline: true },
+        { name: 'Canale', value: `${message.channel}`, inline: true },
+        { name: 'Contenuto', value: content?.slice(0, 1000) || '*(vuoto o solo allegati)*' },
+      ],
+    });
+  },
+};
